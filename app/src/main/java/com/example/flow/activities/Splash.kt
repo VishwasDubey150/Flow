@@ -1,14 +1,10 @@
-package com.example.flow
+package com.example.flow.activities
 
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import androidx.appcompat.app.ActionBar
-import java.util.logging.Handler
+import com.example.flow.R
 
 class splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,9 +16,9 @@ class splash : AppCompatActivity() {
             window.statusBarColor = getColor(android.R.color.black) // Replace yourDesiredColor with the color you want
         }
         android.os.Handler().postDelayed({
-            val mainIntent = Intent(this@splash, MainActivity::class.java)
+            val mainIntent = Intent(this@splash, signup::class.java)
             startActivity(mainIntent)
             finish()
-        }, 3000)
+        }, 500)
     }
 }
