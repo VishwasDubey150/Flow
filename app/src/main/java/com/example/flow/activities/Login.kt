@@ -12,6 +12,7 @@ import com.example.flow.databinding.ActivityLoginBinding
 import com.example.flow.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import model.User
 
 class login : BaseActivity() {
 
@@ -31,6 +32,13 @@ class login : BaseActivity() {
         binding.lBtnLogin.setOnClickListener{
             loginUser()
         }
+    }
+
+    fun signInSuccess(user: User)
+    {
+        hidePB()
+        startActivity(Intent(this,MainActivity::class.java))
+        finish()
     }
 
     private fun loginUser(){
