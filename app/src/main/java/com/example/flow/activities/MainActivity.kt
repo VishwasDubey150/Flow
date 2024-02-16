@@ -1,4 +1,5 @@
 package com.example.flow.activities
+import adapter.BoardItemsAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -6,29 +7,36 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.flow.ProfileActivity
 import com.example.flow.R
 import com.example.flow.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import firestore.FirestoreClass
+import model.Board
 import model.User
+import utils.Constants
 
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
 
     companion object{
         const val MY_PROFILE_REQUEST_CODE:Int = 11
+        const val CREATE_BOARD_REQUEST_CODE: Int = 12
     }
+    private lateinit var mUSerName: String
     lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        supportActionBar?.hide()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = getColor(android.R.color.black)
@@ -40,7 +48,13 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
 
         binding.navView.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().LoadUserData(this)
+        FirestoreClass().LoadUserData(this,true)
+
+        binding.appbar.floatingBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity,BoardActivity::class.java)
+            intent.putExtra(Constants.NAME,mUSerName)
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -50,6 +64,11 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         {
             FirestoreClass().LoadUserData(this)
         }
+
+        else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE){
+            FirestoreClass().getBoardsList(this)
+        }
+
         else{
             Log.e("Cancelled","Cancelled")
         }
@@ -91,12 +110,20 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             doubleBackToExit()
         }
     }
-    fun updateNAvigationUserDetails(user: User) {
+    fun updateNAvigationUserDetails(user: User,readBoardList: Boolean) {
 
         val nav_user_img:ImageView = findViewById(R.id.nav_user_img)
         val nav_username: TextView = findViewById(R.id.nav_username)
 
+        mUSerName =user.name
+
         nav_username.text=user.name
+
+        if (readBoardList)
+        {
+            showPB()
+            FirestoreClass().getBoardsList(this)
+        }
 
         Glide
             .with(this)
@@ -104,5 +131,24 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             .centerCrop()
             .placeholder(R.drawable.baseline_person_24)
             .into(nav_user_img);
+    }
+
+    fun populateBoardsListUI(boardsList: ArrayList<Board>)
+    {
+        hidePB()
+        if(boardsList.size>0){
+            binding.appbar.mainContent.rvBoardsList.visibility = View.VISIBLE
+            binding.appbar.mainContent.tvNoBoard.visibility = View.GONE
+
+            binding.appbar.mainContent.rvBoardsList.layoutManager =LinearLayoutManager(this)
+            binding.appbar.mainContent.rvBoardsList.setHasFixedSize(true)
+
+            val adapter = BoardItemsAdapter(this, boardsList)
+            binding.appbar.mainContent.rvBoardsList.adapter = adapter
+        }
+        else{
+            binding.appbar.mainContent.rvBoardsList.visibility =View.GONE
+            binding.appbar.mainContent.tvNoBoard.visibility =View.VISIBLE
+        }
     }
 }
