@@ -68,7 +68,6 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         else if (resultCode == Activity.RESULT_OK && requestCode == CREATE_BOARD_REQUEST_CODE){
             FirestoreClass().getBoardsList(this)
         }
-
         else{
             Log.e("Cancelled","Cancelled")
         }
@@ -145,6 +144,14 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
 
             val adapter = BoardItemsAdapter(this, boardsList)
             binding.appbar.mainContent.rvBoardsList.adapter = adapter
+
+            adapter.setOnCLickListener(object :BoardItemsAdapter.OnClickListener{
+                override fun onClick(position: Int, model: Board) {
+                    val intent = Intent(this@MainActivity, TaskListActivity::class.java)
+                    intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
+                    startActivity(intent)
+                }
+            })
         }
         else{
             binding.appbar.mainContent.rvBoardsList.visibility =View.GONE

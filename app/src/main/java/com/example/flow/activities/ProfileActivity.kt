@@ -24,10 +24,6 @@ import utils.Constants
 import java.io.IOException
 
 class ProfileActivity : BaseActivity() {
-
-
-
-
     private var mselectedImageFileUri: Uri? = null
     private lateinit var mUserDetails : User
     private var mProfileImageURL: String = ""

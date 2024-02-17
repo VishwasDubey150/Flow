@@ -19,6 +19,8 @@ object Constants {
     const val MOBILE:String="mobile"
     const val READ_STORAGE_PERMISSION = 1
     const val PICK_IMAGE_REQUEST_CODE = 1
+    const val DOCUMENT_ID : String = "documentId"
+
 
     fun showImageChooser(activity: Activity) {
         val galleryIntent = Intent(

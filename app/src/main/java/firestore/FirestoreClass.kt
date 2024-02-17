@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.example.flow.activities.BoardActivity
 import com.example.flow.activities.ProfileActivity
 import com.example.flow.activities.MainActivity
+import com.example.flow.activities.TaskListActivity
 import com.example.flow.activities.login
 import com.example.flow.activities.signup
 import com.google.firebase.auth.FirebaseAuth
@@ -139,4 +140,25 @@ open class FirestoreClass {
                 )
             }
     }
+
+    fun getBoardDetails(activity: TaskListActivity,documented: String){
+        mFirestore.collection(Constants.BOARDS)
+            .document(documented)
+            .get()
+            .addOnSuccessListener {
+                    document ->
+                activity.boardDetails(document.toObject(Board::class.java)!!)
+                Log.i(activity.javaClass.simpleName, document.toString())
+            }.addOnFailureListener {
+                e ->
+                activity.hidePB()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error writing document",
+                    e
+                )
+            }
+
+    }
+
 }

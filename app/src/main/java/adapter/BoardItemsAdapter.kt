@@ -15,7 +15,6 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
 
     private var onClickListener:OnClickListener? = null
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_board,parent,false))
     }
@@ -48,6 +47,11 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
     interface OnClickListener{
         fun onClick(position: Int,model: Board)
     }
+
+    fun setOnCLickListener(onClickListener: OnClickListener){
+        this.onClickListener = onClickListener
+    }
+
     private class MyViewHolder(view : View):RecyclerView.ViewHolder(view){
     }
 
