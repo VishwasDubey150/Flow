@@ -141,13 +141,37 @@ open class FirestoreClass {
             }
     }
 
+
+    fun addUpdateTaskList(activity: TaskListActivity,board: Board)
+    {
+        val taskListHashMap = HashMap<String,Any>()
+        taskListHashMap[Constants.TASK_LIST] = board.taskList
+
+        mFirestore.collection(Constants.BOARDS)
+            .document(board.documentId)
+            .update(taskListHashMap)
+            .addOnSuccessListener {
+                activity.addUpdateTaskListSuccess()
+            }
+            .addOnFailureListener {
+                e ->
+                activity.hidePB()
+                Log.e(activity.javaClass.simpleName,"Error while creating a board.",e)
+            }
+
+    }
+
     fun getBoardDetails(activity: TaskListActivity,documented: String){
         mFirestore.collection(Constants.BOARDS)
             .document(documented)
             .get()
             .addOnSuccessListener {
                     document ->
-                activity.boardDetails(document.toObject(Board::class.java)!!)
+
+                val board =document.toObject(Board::class.java)!!
+
+                board.documentId=document.id
+                activity.boardDetails(board)
                 Log.i(activity.javaClass.simpleName, document.toString())
             }.addOnFailureListener {
                 e ->
