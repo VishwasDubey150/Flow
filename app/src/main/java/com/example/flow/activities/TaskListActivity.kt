@@ -2,7 +2,6 @@ package com.example.flow.activities
 
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,9 +10,9 @@ import com.example.flow.R
 import com.example.flow.databinding.ActivityTaskListBinding
 import firestore.FirestoreClass
 import model.Board
+import model.Card
 import model.Task
 import utils.Constants
-import java.text.FieldPosition
 
 class TaskListActivity : BaseActivity() {
     lateinit var binding: ActivityTaskListBinding
@@ -92,5 +91,24 @@ class TaskListActivity : BaseActivity() {
          showPB()
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
+    fun addCardToTaskList(position: Int,cardName: String)
+    {
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        val cardAssignedUserList: ArrayList<String> = ArrayList()
+        cardAssignedUserList.add(FirestoreClass().getCurrentUserId())
 
+        val card = Card(cardName,FirestoreClass().getCurrentUserId(),cardAssignedUserList)
+
+        val cardsList = mBoardDetails.taskList[position].cards
+
+        cardsList.add(card)
+        val task = Task(
+            mBoardDetails.taskList[position].title,
+            mBoardDetails.taskList[position].createdBy,
+            cardsList)
+        mBoardDetails.taskList[position] = task
+
+        showPB()
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
+    }
 }

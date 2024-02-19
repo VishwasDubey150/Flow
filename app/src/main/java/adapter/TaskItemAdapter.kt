@@ -95,6 +95,36 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                 alertDialogForDeleteList(position,model.title)
             }
 
+            holder.itemView.findViewById<TextView>(R.id.tv_add_card).setOnClickListener {
+                holder.itemView.findViewById<TextView>(R.id.tv_add_card).visibility =
+                    View.GONE
+                holder.itemView.findViewById<CardView>(R.id.cv_add_card).visibility =
+                    View.VISIBLE
+            }
+
+            holder.itemView.findViewById<ImageButton>(R.id.ib_close_card_name).setOnClickListener {
+                holder.itemView.findViewById<TextView>(R.id.tv_add_card).visibility =
+                    View.VISIBLE
+                holder.itemView.findViewById<CardView>(R.id.cv_add_card).visibility =
+                    View.GONE
+            }
+
+            holder.itemView.findViewById<ImageButton>(R.id.ib_done_card_name).setOnClickListener {
+
+                val cardname = holder.itemView.findViewById<EditText>(R.id.et_card_name).text.toString()
+                if(cardname.isNotEmpty())
+                {
+                    if(context is TaskListActivity)
+                    {
+                        context.addCardToTaskList(position, cardname)
+                    }
+                    else{
+                        Toast.makeText(context,"Please Enter Card Name",Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+
 
 
 
@@ -113,6 +143,7 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                     Toast.makeText(context,"Please Enter List Name",Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
     }
 
@@ -147,6 +178,7 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
         alertDialog.setCancelable(false) // Will not allow user to cancel after clicking on remaining screen area.
         alertDialog.show()  // show the dialog to UI
     }
+
 
 
 
