@@ -1,5 +1,6 @@
 package com.Flow.adapters
 
+import adapter.CardItemsAdapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
@@ -12,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flow.R
 import com.example.flow.activities.TaskListActivity
@@ -43,7 +45,6 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                 holder.itemView.findViewById<LinearLayout>(R.id.ll_task_item).visibility =
                     View.VISIBLE
             }
-//
             holder.itemView.findViewById<TextView>(R.id.tv_task_list_title).text = model.title
 
             holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).setOnClickListener {
@@ -124,6 +125,11 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                 }
 
             }
+
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).layoutManager=LinearLayoutManager(context)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).setHasFixedSize(true)
+            val adapter = CardItemsAdapter(context,model.cards)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter=adapter
 
 
 
