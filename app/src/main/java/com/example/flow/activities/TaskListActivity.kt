@@ -32,7 +32,7 @@ class TaskListActivity : BaseActivity() {
             window.statusBarColor = getColor(android.R.color.black)
         }
         binding.btnBack.setOnClickListener {
-            val intent = Intent(this,MembersActivity::class.java)
+            val intent = Intent(this,MainActivity::class.java)
             intent.putExtra(Constants.BOARD_DETAILS,mBoardDetails)
             startActivityForResult(intent, MEMBER_REQUEST_CODE)
         }
@@ -119,6 +119,7 @@ class TaskListActivity : BaseActivity() {
         mBoardDetails.taskList.removeAt(position)
         mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size -1)
          showPB()
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
     fun addCardToTaskList(position: Int,cardName: String)

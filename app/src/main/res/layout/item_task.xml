@@ -122,7 +122,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/image_contentDescription"
                     android:padding="@dimen/task_item_image_buttons_padding"
-                    android:src="@drawable/baseline_delete_24" />
+                    android:src="@drawable/baseline_delete_red_24" />
             </LinearLayout>
 
 
