@@ -1,9 +1,10 @@
 package com.example.flow.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.Flow.adapters.TaskListItemsAdapter
 import com.example.flow.R
@@ -16,22 +17,31 @@ import utils.Constants
 
 class TaskListActivity : BaseActivity() {
     lateinit var binding: ActivityTaskListBinding
-
     private lateinit var mBoardDetails : Board
+
+    private lateinit var mBoardDocumentId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityTaskListBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        Toast.makeText(this,"Tasks",Toast.LENGTH_SHORT).show()
         supportActionBar?.hide()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = getColor(android.R.color.black)
         }
         binding.btnBack.setOnClickListener {
-            startActivity(Intent(this@TaskListActivity,MainActivity::class.java))
+            val intent = Intent(this,MembersActivity::class.java)
+            intent.putExtra(Constants.BOARD_DETAILS,mBoardDetails)
+            startActivityForResult(intent, MEMBER_REQUEST_CODE)
         }
+        binding.more.setOnClickListener {
+
+            val intent = Intent(this, MembersActivity::class.java)
+            intent.putExtra(Constants.BOARD_DETAILS,mBoardDetails)
+            startActivity(intent)
+            }
 
         var boardDocumentId = ""
         if(intent.hasExtra(Constants.DOCUMENT_ID))
@@ -40,7 +50,27 @@ class TaskListActivity : BaseActivity() {
         }
         showPB()
         FirestoreClass().getBoardDetails(this,boardDocumentId)
+    }
 
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == MEMBER_REQUEST_CODE || requestCode == CARD_DETAILS_REQUEST_CODE)
+        {
+            showPB()
+            FirestoreClass().getBoardDetails(this,mBoardDocumentId)
+        }
+        Log.e("cancel","cancel")
+    }
+
+    fun carDetails(taskListPosition: Int,cardPosition: Int)
+    {
+        val intent= Intent(this, CardDetails::class.java)
+        intent.putExtra(Constants.BOARD_DETAILS,mBoardDetails)
+        intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
+        intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
     }
 
     fun boardDetails(board: Board) {
@@ -111,4 +141,10 @@ class TaskListActivity : BaseActivity() {
         showPB()
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
+
+    companion object{
+        const val MEMBER_REQUEST_CODE : Int = 13
+        const val CARD_DETAILS_REQUEST_CODE: Int = 14
+    }
+
 }

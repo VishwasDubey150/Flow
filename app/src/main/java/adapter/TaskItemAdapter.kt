@@ -131,7 +131,16 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
             val adapter = CardItemsAdapter(context,model.cards)
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter=adapter
 
-
+            adapter.setOnClickListener(
+                object : CardItemsAdapter.OnClickListener{
+                    override fun onClick(cardPositon: Int) {
+                        if(context is TaskListActivity)
+                        {
+                            context.carDetails(position, cardPositon )
+                        }
+                    }
+                }
+            )
 
 
             holder.itemView.findViewById<ImageButton>(R.id.ib_done_list_name).setOnClickListener {
@@ -184,10 +193,6 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
         alertDialog.setCancelable(false) // Will not allow user to cancel after clicking on remaining screen area.
         alertDialog.show()  // show the dialog to UI
     }
-
-
-
-
 
     private fun Int.toDp(): Int =
         (this / Resources.getSystem().displayMetrics.density).toInt()
