@@ -13,13 +13,14 @@ import firestore.FirestoreClass
 import model.Board
 import model.Card
 import model.Task
+import model.User
 import utils.Constants
 
 class TaskListActivity : BaseActivity() {
     lateinit var binding: ActivityTaskListBinding
     private lateinit var mBoardDetails : Board
-
     private lateinit var mBoardDocumentId: String
+    lateinit var mAssignedMemberDetailList: ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +71,7 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAILS,mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailList)
         startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
     }
 
@@ -79,14 +81,9 @@ class TaskListActivity : BaseActivity() {
         hidePB()
         binding.tv.text =board.name
 
-        val addTaskList = Task(resources.getString(R.string.add_list))
-        board.taskList.add(addTaskList)
 
-        binding.rvTaskList.layoutManager = LinearLayoutManager(this@TaskListActivity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvTaskList.setHasFixedSize(true)
-
-        val adapter = TaskListItemsAdapter(this@TaskListActivity, board.taskList)
-        binding.rvTaskList.adapter = adapter
+        showPB()
+        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
     }
 
     fun addUpdateTaskListSuccess(){
@@ -143,9 +140,24 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 
+    fun boardMembersDetailsList(list: ArrayList<User>)
+    {
+        mAssignedMemberDetailList =list
+        hidePB()
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        mBoardDetails.taskList.add(addTaskList)
+
+        binding.rvTaskList.layoutManager = LinearLayoutManager(this@TaskListActivity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvTaskList.setHasFixedSize(true)
+
+        val adapter = TaskListItemsAdapter(this@TaskListActivity, mBoardDetails.taskList)
+        binding.rvTaskList.adapter = adapter
+    }
+
     companion object{
         const val MEMBER_REQUEST_CODE : Int = 13
         const val CARD_DETAILS_REQUEST_CODE: Int = 14
     }
+
 
 }

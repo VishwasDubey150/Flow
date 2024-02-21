@@ -194,7 +194,7 @@ open class FirestoreClass {
             }
     }
 
-    fun getAssignedMembersListDetails(activity: MembersActivity,assignedTo:ArrayList<String>)
+    fun getAssignedMembersListDetails(activity: Activity,assignedTo:ArrayList<String>)
     {
         mFirestore.collection(Constants.USERS)
             .whereIn(Constants.ID,assignedTo)
@@ -209,10 +209,24 @@ open class FirestoreClass {
                     val user = i.toObject(User::class.java)!!
                     userList.add(user)
                 }
-                activity.setupMemberList(userList)
+                if (activity is MembersActivity)
+                {
+                    activity.setupMemberList(userList)
+                }
+                if (activity is TaskListActivity)
+                {
+                    activity.boardMembersDetailsList(userList)
+                }
             }.addOnFailureListener {
                 e->
-                activity.hidePB()
+                if (activity is MembersActivity)
+                {
+                    activity.hidePB()
+                }
+                if (activity is TaskListActivity)
+                {
+                    activity.hidePB()
+                }
                 Log.e(activity.javaClass.simpleName,"Error",e)
             }
     }

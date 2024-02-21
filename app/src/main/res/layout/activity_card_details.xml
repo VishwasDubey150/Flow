@@ -144,6 +144,17 @@
                     android:text="select members"
                     android:textColor="@color/primary_text_color" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_selected_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_marginTop="5dp"
+                    >
+                </androidx.recyclerview.widget.RecyclerView>
+
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
