@@ -22,7 +22,6 @@ import java.io.IOException
 class BoardActivity : BaseActivity() {
 
     lateinit var binding: ActivityBoardBinding
-    private var mselectedImageFileUri: Uri? = null
 
     private  lateinit var mUserName :  String
 
@@ -42,47 +41,21 @@ class BoardActivity : BaseActivity() {
         }
 
         binding.btnCreateBoard.setOnClickListener {
-            if (mselectedImageFileUri != null)
-            {
-                uploadBoardImage()
-            }
-            else
-            {
+
                 showPB()
                 createBoard()
             }
-        }
+
 
         binding.boardBack.setOnClickListener {
             startActivity(Intent(this@BoardActivity,MainActivity::class.java))
         }
 
-        binding.boardImg.setOnClickListener {
-            Constants.showImageChooser(this)
-        }
+//        binding.boardImg.setOnClickListener {
+//            Constants.showImageChooser(this)
+//        }
     }
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.PICK_IMAGE_REQUEST_CODE) {
-                if (data != null) {
-                    try {
-                        mselectedImageFileUri = data.data!!
-                        Glide
-                            .with(this)
-                            .load(mselectedImageFileUri)
-                            .centerCrop()
-                            .placeholder(R.drawable.baseline_person_24)
-                            .into(binding.boardImg)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
 
-    }
     fun boardCreatedSuccessfully()
     {
         hidePB()
@@ -102,31 +75,4 @@ class BoardActivity : BaseActivity() {
         )
         FirestoreClass().createBoard(this, board)
     }
-
-
-    private fun uploadBoardImage(){
-        showPB()
-        val sref : StorageReference =
-            FirebaseStorage.getInstance().reference.child(
-                "BOARD_IMAGE"+System.currentTimeMillis()
-                        +"."+Constants.getfileExtension(this,mselectedImageFileUri))
-
-        sref.putFile(mselectedImageFileUri!!).addOnSuccessListener {
-                taskSnapshot ->
-            Log.i("Board Image URL",taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
-
-            taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                    uri ->
-                Log.i("Downloadable Image URL",uri.toString())
-                mBoardImageURL=uri.toString()
-                createBoard()
-            }
-        }.addOnFailureListener {
-                exception ->
-            Toast.makeText(this,exception.message,Toast.LENGTH_SHORT).show()
-            hidePB()
-        }
-    }
-
-
 }

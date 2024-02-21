@@ -3,6 +3,7 @@ package com.example.flow.activities
 import adapter.CardMemberListItemsAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -23,6 +24,9 @@ import model.SelectedMembers
 import model.Task
 import model.User
 import utils.Constants
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class CardDetails : BaseActivity() {
 
@@ -34,6 +38,8 @@ class CardDetails : BaseActivity() {
     private var mSelectedColor = ""
 
     lateinit var binding: ActivityCardDetailsBinding
+
+    private var mSelectedDueDateMilli:Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +54,9 @@ class CardDetails : BaseActivity() {
         binding.tvSelectLabelColor.setOnClickListener {
             labelColorsListDialog()
         }
+        binding.btnBackForCarddetails.setOnClickListener{
+            startActivity(Intent(this@CardDetails,MainActivity::class.java))
+        }
         binding.tv.text=mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].name
         binding.etNameCardDetails.setText(mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].name)
 //        binding.etNameCardDetails.setSelection(binding.etNameCardDetails.text.toString())
@@ -55,12 +64,22 @@ class CardDetails : BaseActivity() {
         binding.tvSelectMembers.setOnClickListener {
             membersListDialog()
         }
+        binding.tvSelectDueDate.setOnClickListener {
+            showDataPicker()
+        }
         mSelectedColor = mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].labelColor
 
         if (mSelectedColor.isNotEmpty())
         {
             setColor()
         }
+
+        mSelectedDueDateMilli= mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].dueDate
+
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        val selectedDate = simpleDateFormat.format(mSelectedDueDateMilli)
+
+        binding.tvSelectDueDate.text = selectedDate
 
         binding.btnUpdateCardDetails.setOnClickListener {
             if(binding.etNameCardDetails.text.toString().isNotEmpty())
@@ -104,7 +123,7 @@ class CardDetails : BaseActivity() {
     fun addUpdateTaskListSuccess() {
         hidePB()
         setResult(Activity.RESULT_OK)
-        startActivity(Intent(this@CardDetails,TaskListActivity::class.java))
+        startActivity(Intent(this@CardDetails,MainActivity::class.java))
         finish()
     }
 
@@ -112,7 +131,7 @@ class CardDetails : BaseActivity() {
         val card = Card(binding.etNameCardDetails.text.toString(),
              mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskPosition].cards[mCardPosition].assignedTo,
-            mSelectedColor)
+            mSelectedColor,mSelectedDueDateMilli)
 
 
         val taskList : ArrayList<Task> = mBoardDetails.taskList
@@ -160,7 +179,7 @@ class CardDetails : BaseActivity() {
     {
         val colorList: ArrayList<String>  = ArrayList()
         colorList.add("#ffffff")
-        colorList.add("#74E291")
+        colorList.add("#416D19")
         colorList.add("#F3B95F")
 
         return  colorList
@@ -176,7 +195,7 @@ class CardDetails : BaseActivity() {
     {
         val colorsList: ArrayList<String> = colorsList()
 
-        val listDialog = object :LabelColorListDialog(this, colorsList,"Select the label Color",mSelectedColor)
+        val listDialog = object :LabelColorListDialog(this, colorsList,"Select the Color (white:Not Started , Green : Completed , yellow : In Progress)",mSelectedColor)
         {
             override fun onItemSelected(color: String) {
                 mSelectedColor=color
@@ -274,4 +293,30 @@ class CardDetails : BaseActivity() {
             binding.rvSelectedMembersList.visibility = View.GONE
         }
     }
+
+    private fun showDataPicker() {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR) // Returns the value of the given calendar field. This indicates YEAR
+        val month = c.get(Calendar.MONTH) // This indicates the Month
+        val day = c.get(Calendar.DAY_OF_MONTH) // This indicates the Day
+
+        val dpd = DatePickerDialog(this,
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+               val sDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+                val sMonthOfYear = if ((monthOfYear + 1) < 10) "0${monthOfYear + 1}" else "${monthOfYear + 1}"
+
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
+                binding.tvSelectDueDate.text = selectedDate
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val theDate = sdf.parse(selectedDate)
+                mSelectedDueDateMilli= theDate!!.time
+            },
+            year,
+            month,
+            day
+        )
+        dpd.show()
+    }
+
 }

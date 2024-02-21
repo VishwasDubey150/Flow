@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/btn_back"
+            android:id="@+id/btn_back_for_carddetails"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"

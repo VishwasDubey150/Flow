@@ -26,11 +26,6 @@ open class BoardItemsAdapter(private val context: Context, private var list: Arr
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
         if(holder is MyViewHolder){
-            Glide.with(context)
-                .load(model.image)
-                .centerCrop()
-                .placeholder(R.drawable.baseline_person_24)
-                .into(holder.itemView.findViewById(R.id.iv_board_img))
 
             holder.itemView.findViewById<TextView>(R.id.tv_boardname).text = model.name
             holder.itemView.findViewById<TextView>(R.id.tv_createdby).text = "Created by:"+model.createdBy

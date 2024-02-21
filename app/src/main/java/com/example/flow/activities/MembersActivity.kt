@@ -34,9 +34,8 @@ class MembersActivity : BaseActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = getColor(android.R.color.black)
         }
-        binding.btnBackMem.setOnClickListener {
-            val intent=Intent(this@MembersActivity,TaskListActivity::class.java)
-            startActivity(intent)
+        binding.btnBackFormMemberact.setOnClickListener {
+            startActivity(Intent(this@MembersActivity,MainActivity::class.java))
         }
 
         if(intent.hasExtra(Constants.BOARD_DETAILS))

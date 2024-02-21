@@ -120,7 +120,7 @@
     <dimen name="dialog_list_cv_elevation_and_corner_radius">3dp</dimen>
     <dimen name="dialog_list_content_padding">10dp</dimen>
     <dimen name="dialog_list_title_padding">5dp</dimen>
-    <dimen name="dialog_list_title_text_size">18sp</dimen>
+    <dimen name="dialog_list_title_text_size">10sp</dimen>
     <dimen name="dialog_list_divider_height">1dp</dimen>
     <dimen name="dialog_list_marginTopBottom">3dp</dimen>
     <dimen name="item_selected_member_image_size">45dp</dimen>

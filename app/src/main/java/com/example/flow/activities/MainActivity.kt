@@ -24,7 +24,6 @@ import model.User
 import utils.Constants
 
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
-
     companion object{
         const val MY_PROFILE_REQUEST_CODE:Int = 11
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
@@ -36,8 +35,8 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         binding= ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        supportActionBar?.hide()
 
+        supportActionBar?.hide()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = getColor(android.R.color.black)
         }
@@ -47,7 +46,7 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         }
 
         binding.navView.setNavigationItemSelectedListener(this)
-
+        showPB()
         FirestoreClass().LoadUserData(this,true)
 
         binding.appbar.floatingBtn.setOnClickListener {
@@ -120,7 +119,6 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
 
         if (readBoardList)
         {
-            showPB()
             FirestoreClass().getBoardsList(this)
         }
 
