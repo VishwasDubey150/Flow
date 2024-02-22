@@ -29,6 +29,10 @@ object Constants {
     const val CARD_LIST_ITEM_POSITION: String = "card_list_item_position"
     const val SELECT: String="Select"
     const val UN_SELECT: String="UnSelect"
+    const val FLOW_PREFERENCES = "flowprefs"
+
+    const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
+    const val FCM_TOKEN="fcmToken"
 
     fun showImageChooser(activity: Activity) {
         val galleryIntent = Intent(

@@ -2,7 +2,9 @@ package com.example.flow.activities
 import adapter.BoardItemsAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +20,7 @@ import com.example.flow.R
 import com.example.flow.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import firestore.FirestoreClass
 import model.Board
 import model.User
@@ -29,6 +32,9 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         const val CREATE_BOARD_REQUEST_CODE: Int = 12
     }
     private lateinit var mUSerName: String
+
+    private lateinit var mSharedPreferences: SharedPreferences
+
     lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +42,20 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         val view = binding.root
         setContentView(view)
 
+//        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED , false)
+//
+//        if(tokenUpdated){
+//            showPB()
+//            FirestoreClass().LoadUserData(this,true)
+//        }
+//        else{
+//            FirebaseMessaging.getInstance().token.addOnSuccessListener(this@MainActivity){
+//                result ->
+//                updateFCMToken(result)
+//            }
+//        }
+
+        mSharedPreferences = this.getSharedPreferences(Constants.FLOW_PREFERENCES,Context.MODE_PRIVATE)
         supportActionBar?.hide()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = getColor(android.R.color.black)
@@ -80,6 +100,8 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
 
             R.id.nav_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
+
+                mSharedPreferences.edit().clear().apply()
                 val intent = Intent(this, login::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -155,5 +177,22 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             binding.appbar.mainContent.rvBoardsList.visibility =View.GONE
             binding.appbar.mainContent.tvNoBoard.visibility =View.VISIBLE
         }
+    }
+
+    fun tokenUpdateSuccess(){
+        hidePB()
+        val editor:SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED,true)
+        editor.apply()
+        showPB()
+        FirestoreClass().LoadUserData(this,true)
+    }
+
+    private fun updateFCMToken(token: String)
+    {
+        val userHashMap = HashMap<String,Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+        showPB()
+        FirestoreClass().updateuserProfileData(this,userHashMap)
     }
 }
